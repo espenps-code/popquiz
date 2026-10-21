@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Popquiz – Materialer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf6ec; --card:#ffffff; --ink:#14213d; --muted:#4f5868;
+  --accent:#2f6fb5; --accent-dark:#1f4f86; --accent-soft:#e6eff9; --line:#bcd0e8;
+  --warm:#a64b00; --warm-soft:#ffe3c2;
+  --ok:#1b6e3f; --ok-soft:#e1f4e8; --bad:#a8231b; --bad-soft:#fbe4e2;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif;font-size:18px;line-height:1.5}
+main{max-width:680px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.75rem;line-height:1.2;margin:.15em 0 .3em}
+h2{font-size:1.4rem;line-height:1.25;margin:.2em 0 .4em}
+p{margin:.4em 0}
+.badge{display:inline-block;background:var(--warm-soft);color:var(--warm);font-weight:700;font-size:.85rem;padding:3px 10px;border-radius:999px}
+.lead{color:var(--muted)}
+.card{background:var(--card);border:1px solid #f0d9b5;border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 1px 3px rgba(20,33,61,.06)}
+.lbl{display:block;font-weight:700;margin:4px 0 6px}
+input[type=text]{width:100%;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input[type=text]:focus{outline:3px solid #9cc3ee;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{display:flex;align-items:center;gap:6px;border:2px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;background:#fff;font-size:.95rem;user-select:none}
+.chip input{accent-color:var(--accent);width:18px;height:18px}
+.chip.on{background:var(--accent-soft);border-color:var(--accent)}
+.btn{font:inherit;font-weight:700;border:none;border-radius:12px;padding:11px 18px;cursor:pointer;min-height:48px}
+.btn:focus-visible{outline:3px solid #9cc3ee;outline-offset:2px}
+.primary{background:var(--accent);color:#fff}
+.primary:hover{background:var(--accent-dark)}
+.primary:disabled{background:#9fb3cb;cursor:not-allowed}
+.ghost{background:var(--accent-soft);color:var(--accent-dark)}
+.ghost:hover{background:#d5e5f6}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.qitem{display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.qnum{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center}
+.qbody{flex:1;min-width:0}
+.qtag{font-size:.8rem;color:var(--warm);font-weight:700}
+.qtext{margin:2px 0 0}
+.swap{flex:none;font:inherit;font-size:.9rem;font-weight:700;background:var(--accent-soft);color:var(--accent-dark);border:none;border-radius:10px;padding:8px 10px;cursor:pointer;min-height:40px}
+.linkbox{display:flex;gap:8px;flex-wrap:wrap}
+.linkbox input{flex:1 1 220px;font-size:.9rem}
+.note{color:var(--muted);font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+/* Elev */
+.progress{display:flex;align-items:center;gap:12px;margin:6px 0 4px}
+.bar{flex:1;height:10px;background:#e6eef8;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent);transition:width .3s}
+.count{color:var(--warm);font-weight:700;white-space:nowrap}
+.hint{color:var(--warm);margin:0 0 10px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);background:#fff;border-radius:12px;padding:14px;margin:10px 0;cursor:pointer;transition:background .15s,border-color .15s}
+.opt:hover{border-color:var(--accent)}
+.opt input{flex:none;width:22px;height:22px;margin-top:2px;accent-color:var(--accent)}
+.opt.sel{background:var(--accent-soft);border-color:var(--accent)}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.opt.missed{border-color:var(--ok);border-style:dashed}
+.opt.done{cursor:default}
+.mark{margin-left:auto;font-weight:700;white-space:nowrap}
+.feedback{border-radius:12px;padding:14px;margin:14px 0}
+.feedback.ok{background:var(--ok-soft);border:2px solid var(--ok)}
+.feedback.no{background:var(--bad-soft);border:2px solid var(--bad)}
+.feedback strong{font-size:1.1rem}
+.score{font-size:3rem;font-weight:700;color:var(--accent);line-height:1}
+.review{list-style:none;padding:0;margin:0}
+.review li{border-top:1px solid #eadfcd;padding:10px 0}
+.review li:first-child{border-top:none}
+.review .ans{color:var(--muted);font-size:.95rem}
+.center{text-align:center}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =========================================================
+   INNSTILLINGER – endre gjerne disse
+   ========================================================= */
+const QUIZ_NAVN = "Materialer";   // vises i overskriften
+const ANTALL = 5;                 // antall spørsmål per popquiz
+
+/* =========================================================
+   SPØRSMÅLSBANK
+   id:   unik kode – ALDRI endre en id som er brukt i en lenke
+   type: "single" = ett riktig svar, "multi" = ett eller flere
+   a:    svaralternativer
+   c:    nummer på riktige svar (første alternativ = 0)
+   f:    forklaring som vises etter at eleven har svart
+   ========================================================= */
+const BANK = [
+  // ---------- Egenskaper ----------
+  {id:"e1",tema:"Egenskaper",type:"single",q:"Hva er flytegrensen til et materiale?",
+   a:["Grensen for hvor mye det tåler før det får en varig formendring","Temperaturen der materialet smelter","Hvor mye materialet kan strekkes før det ryker","Hvor fort materialet renner når det er smeltet"],c:[0],
+   f:"Under flytegrensen går materialet tilbake til formen sin når du slipper. Over flytegrensen blir formendringen varig."},
+  {id:"e2",tema:"Egenskaper",type:"single",q:"Hva skjer hvis et materiale blir belastet mer enn strekkfastheten tåler?",
+   a:["Det blir brudd","Det går alltid tilbake til sin opprinnelige form","Det blir hardere","Det begynner å ruste"],c:[0],
+   f:"Strekkfasthet er den største strekkbelastningen et materiale tåler. Går man over den, ryker materialet."},
+  {id:"e3",tema:"Egenskaper",type:"single",q:"Du bøyer en stållinjal litt, slipper, og den spretter tilbake. Hva kalles denne formendringen?",
+   a:["Elastisk formendring","Plastisk formendring","Korrosjon","Brudd"],c:[0],
+   f:"Elastisk formendring er midlertidig. Plastisk formendring er varig – da har du gått over flytegrensen."},
+  {id:"e4",tema:"Egenskaper",type:"multi",q:"Hvilke påstander om flytegrense og strekkfasthet er riktige?",
+   a:["For de fleste metaller er strekkfastheten høyere enn flytegrensen","Flytegrensen er med på å avgjøre hva et materiale kan brukes til","Flytegrense og strekkfasthet har alltid samme verdi","Strekkfasthet måles ved å hamre på materialet"],c:[0,1],
+   f:"Et metall blir først varig bøyd (flytegrensen), og tåler så litt til før det ryker (strekkfastheten). Strekkfasthet måles ved å trekke i en prøvestav."},
+  {id:"e5",tema:"Egenskaper",type:"single",q:"Fire like tykke tråder: Hvilken tåler mest trekk før den ryker?",
+   a:["En stålvaier","En strikk","En bomullstråd","En strimmel fra en plastpose"],c:[0],
+   f:"Stål har svært høy strekkfasthet. Derfor brukes stålvaiere i heiser, kraner og hengebroer."},
+  {id:"e6",tema:"Egenskaper",type:"single",q:"Hva betyr det at et materiale er sprøtt?",
+   a:["Det brekker uten å bøye seg først","Det er lett å bøye uten at det brekker","Det leder strøm godt","Det tåler høy temperatur"],c:[0],
+   f:"Glass og støpejern er eksempler på sprø materialer. Det motsatte av sprøtt er seigt."},
+  {id:"e7",tema:"Egenskaper",type:"single",q:"Hva sier hardheten til et materiale noe om?",
+   a:["Hvor godt det tåler riper og at noe presses inn i overflaten","Hvor tungt det er","Hvor godt det leder varme","Hvor mye det kan strekkes"],c:[0],
+   f:"Et hardt materiale er vanskelig å ripe. Diamant er det hardeste naturlige materialet vi kjenner."},
+
+  // ---------- Metaller ----------
+  {id:"m1",tema:"Metaller",type:"multi",q:"Hvilke påstander om stål er riktige?",
+   a:["Stål er jern blandet med litt karbon og ofte andre grunnstoffer","Stål er et eget grunnstoff","Vanlig stål kan ruste","Rustfritt stål inneholder krom"],c:[0,2,3],
+   f:"Stål er en legering, ikke et grunnstoff. Krom i rustfritt stål lager et tynt lag på overflaten som beskytter mot rust."},
+  {id:"m2",tema:"Metaller",type:"single",q:"Hva er en legering?",
+   a:["Et metall smeltet sammen med ett eller flere andre grunnstoffer","Et metall som er dekket med et lag av et annet metall","To materialer som er limt sammen","Et metall helt uten urenheter"],c:[0],
+   f:"Messing (kobber + sink) og stål (jern + karbon) er legeringer. Et belegg utenpå, som ved galvanisering, er ikke en legering."},
+  {id:"m3",tema:"Metaller",type:"multi",q:"Hvilke påstander om aluminium er riktige?",
+   a:["Aluminium er mye lettere enn stål","Aluminium lager et tynt oksidlag som beskytter mot videre korrosjon","Aluminium er magnetisk","Aluminium finnes som rent metall i naturen"],c:[0,1],
+   f:"Aluminium veier omtrent en tredjedel av stål. Det finnes ikke rent i naturen, men lages av mineralet bauksitt."},
+  {id:"m4",tema:"Metaller",type:"multi",q:"Hvilke påstander om kobber er riktige?",
+   a:["Kobber leder strøm og varme svært godt","Kobber brukes mye i elektriske ledninger","Kobber ruster fort og smuldrer opp","Kobber er et lett metall"],c:[0,1],
+   f:"Kobber korroderer langsomt og får etter hvert et grønt lag (patina) som beskytter metallet under."},
+  {id:"m5",tema:"Metaller",type:"single",q:"Hvilket metall er et giftig tungmetall som må leveres som farlig avfall?",
+   a:["Bly","Aluminium","Magnesium","Titan"],c:[0],
+   f:"Bly er giftig for mennesker og natur. Blyrester skal aldri i restavfallet."},
+  {id:"m6",tema:"Metaller",type:"single",q:"Hvordan finner vi vanligvis jern i naturen?",
+   a:["Som jernmalm, der jernet er bundet til oksygen og andre stoffer","Som rene jernklumper i gruver","Som rust i havet","Bare i meteoritter"],c:[0],
+   f:"Jernet må skilles ut fra malmen ved høy temperatur i en masovn. Nesten alt jern vi bruker kommer fra malm."},
+  {id:"m7",tema:"Metaller",type:"single",q:"Hvorfor lages det mye aluminium i Norge?",
+   a:["Vi har mye strøm fra vannkraft, og aluminiumsproduksjon krever mye strøm","Norge har store gruver med rent aluminium","Aluminium finnes i sjøvannet langs kysten","Det står i loven at vi må"],c:[0],
+   f:"Råstoffet kommer stort sett fra andre land, men prosessen (elektrolyse) bruker enormt mye strøm."},
+  {id:"m8",tema:"Metaller",type:"single",q:"Hva er den største fordelen med å gjenvinne aluminium?",
+   a:["Det bruker bare en liten del av energien som trengs for å lage nytt aluminium","Gjenvunnet aluminium blir sterkere enn nytt","Gjenvunnet aluminium kan ikke korrodere","Det blir billigere å kaste det"],c:[0],
+   f:"Å smelte om gammelt aluminium bruker rundt 5 % av energien som trengs for å lage nytt fra råstoff."},
+
+  // ---------- Kjemiske symboler ----------
+  {id:"s1",tema:"Symboler",type:"single",q:"Hvilket metall har det kjemiske symbolet Fe?",
+   a:["Jern","Bly","Sink","Sølv"],c:[0],f:"Fe kommer fra det latinske ordet ferrum."},
+  {id:"s2",tema:"Symboler",type:"single",q:"Hvilket metall har symbolet Au?",
+   a:["Gull","Sølv","Aluminium","Kobber"],c:[0],f:"Au kommer fra latin aurum. Aluminium har symbolet Al."},
+  {id:"s3",tema:"Symboler",type:"single",q:"Hvilket symbol har sink?",
+   a:["Zn","Si","Sn","S"],c:[0],f:"Si er silisium, Sn er tinn og S er svovel."},
+  {id:"s4",tema:"Symboler",type:"single",q:"Hvilket metall har symbolet Pb?",
+   a:["Bly","Platina","Kobber","Kalium"],c:[0],f:"Pb kommer fra latin plumbum. Platina er Pt og kalium er K."},
+  {id:"s5",tema:"Symboler",type:"single",q:"Ag og Cu er symbolene for to metaller. Hvilke?",
+   a:["Ag = sølv, Cu = kobber","Ag = gull, Cu = kobber","Ag = sølv, Cu = sink","Ag = aluminium, Cu = gull"],c:[0],
+   f:"Ag kommer fra latin argentum (sølv), og Cu fra cuprum (kobber)."},
+
+  // ---------- Korrosjon og overflatebehandling ----------
+  {id:"k1",tema:"Korrosjon",type:"single",q:"Hva er korrosjon?",
+   a:["At et metall reagerer med stoffer rundt seg, som oksygen og vann, og brytes ned","At et metall smelter","At to metaller blandes","At et metall blir magnetisk"],c:[0],
+   f:"Rust er korrosjon på jern og stål."},
+  {id:"k2",tema:"Korrosjon",type:"single",q:"Hvorfor trenger ikke gull beskyttelse mot korrosjon?",
+   a:["Gull er et edelt metall som nesten ikke reagerer med luft og vann","Gull er så hardt","Gull er alltid lakkert","Gull er en legering"],c:[0],
+   f:"Gull er faktisk et mykt metall. Det er fordi det nesten ikke reagerer med omgivelsene at det holder seg blankt."},
+  {id:"k3",tema:"Korrosjon",type:"single",q:"Hva er galvanisering?",
+   a:["Å dekke jern eller stål med et lag sink","Å smelte sink og jern sammen til en legering","Å male jern med rød maling","Å varme opp stål for å gjøre det hardere"],c:[0],
+   f:"Sinklaget ligger utenpå. Derfor er galvanisert jern ikke en legering."},
+  {id:"k4",tema:"Korrosjon",type:"single",q:"Hvorfor beskytter et sinklag jernet mot rust, selv om laget får en ripe?",
+   a:["Sink korroderer lettere enn jern, så sinken «ofres» i stedet for jernet","Sink er hardere enn jern","Sink er vanntett som plast","Sink stenger oksygenet helt ute"],c:[0],
+   f:"Sinken reagerer først. Så lenge det er sink igjen, blir jernet spart."},
+  {id:"k5",tema:"Korrosjon",type:"multi",q:"Hva kan være hensikten med overflatebehandling?",
+   a:["Beskytte mot korrosjon","Beskytte mot slitasje","Gi et pent utseende","Gjøre materialet tyngre"],c:[0,1,2],
+   f:"En bil lakkeres både for å se fin ut og for å beskytte karosseriet mot rust."},
+  {id:"k6",tema:"Korrosjon",type:"single",q:"Hva skjer ved pulverlakkering?",
+   a:["Et fargepulver sprayes på og herdes i en ovn","Metallet senkes i smeltet sink","Metallet pusses med sandpapir","Et tynt metallag legges på ved hjelp av strøm"],c:[0],
+   f:"Det siste alternativet beskriver elektrolyse (for eksempel forkromming) – det er en annen metode."},
+
+  // ---------- Kompositter og plast ----------
+  {id:"p1",tema:"Kompositter og plast",type:"single",q:"Hva er en kompositt?",
+   a:["Et materiale satt sammen av to eller flere materialer som til sammen får bedre egenskaper","To metaller smeltet sammen","En plasttype som kan smeltes om","Et rent grunnstoff"],c:[0],
+   f:"To metaller smeltet sammen kalles en legering, ikke en kompositt."},
+  {id:"p2",tema:"Kompositter og plast",type:"multi",q:"Hvilke av disse er kompositter?",
+   a:["Armert betong","Glassfiberarmert plast","Karbonfiberarmert plast","Messing"],c:[0,1,2],
+   f:"Messing er en legering av kobber og sink – ikke en kompositt."},
+  {id:"p3",tema:"Kompositter og plast",type:"single",q:"Hvorfor legger man stål (armering) inn i betong?",
+   a:["Betong tåler trykk godt, men ikke strekk – stålet tar strekkreftene","For at betongen skal tørke fortere","For å gjøre betongen lettere","For at betongen ikke skal ruste"],c:[0],
+   f:"Sammen blir betong og stål et materiale som tåler både trykk og strekk."},
+  {id:"p4",tema:"Kompositter og plast",type:"single",q:"Hva er riktig om plast?",
+   a:["Det finnes mange typer plast med ulike egenskaper","Det finnes bare én type plast","All plast tåler høy varme","Plast leder strøm godt"],c:[0],
+   f:"Plast kan være myk, hard, seig, gjennomsiktig og mye mer – alt etter hvilken type det er."},
+  {id:"p5",tema:"Kompositter og plast",type:"single",q:"Hva kjennetegner en termoplast?",
+   a:["Den kan varmes opp, smeltes og formes på nytt","Den kan aldri smeltes","Den er alltid gjennomsiktig","Den er laget av metall"],c:[0],
+   f:"Herdeplast blir hard for godt og kan ikke smeltes om. Termoplast kan smeltes flere ganger."},
+
+  // ---------- HMS og avfall ----------
+  {id:"h1",tema:"HMS og avfall",type:"single",q:"Hva finner du i et sikkerhetsdatablad (HMS-datablad)?",
+   a:["Hvilke farer et kjemikalie har, og hvordan det skal brukes, lagres og kastes","Prisen på kjemikaliet","Hvem som bygde verkstedet","Bruksanvisningen til maskinene"],c:[0],
+   f:"Sikkerhetsdatabladet skal alltid være tilgjengelig der kjemikaliet brukes."},
+  {id:"h2",tema:"HMS og avfall",type:"multi",q:"Hva er riktig om avfall fra verkstedet?",
+   a:["Kjemikalierester skal leveres som farlig avfall","Metall kan gjenvinnes mange ganger","Malingsrester kan helles i vasken","Alt avfall kan kastes i samme søppelkasse"],c:[0,1],
+   f:"Maling og kjemikalier i vasken kan skade naturen og renseanlegget. Avfall skal sorteres."},
+  {id:"h3",tema:"HMS og avfall",type:"single",q:"Hvorfor er det lurt å sortere ut metallavfall?",
+   a:["Metallet kan smeltes om og brukes på nytt, og det sparer energi og råstoff","Metall brenner godt i forbrenningsanlegg","Bare for at det skal se ryddig ut","Metall forsvinner av seg selv i naturen"],c:[0],
+   f:"Metall kan gjenvinnes nesten uten at kvaliteten blir dårligere."}
+];
+// SLUTT BANK
+
+/* =========================================================
+   Herfra og ned: selve appen. Trenger ikke endres.
+   ========================================================= */
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const byId = Object.fromEntries(BANK.map(q => [q.id, q]));
+const TEMAER = [...new Set(BANK.map(q => q.tema))];
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+/* ---------------- LÆRERPORTAL ---------------- */
+const L = { temaer: new Set(TEMAER), utvalg: [], tittel: "Popquiz: " + QUIZ_NAVN };
+const pool = () => BANK.filter(q => L.temaer.has(q.tema));
+
+function trekk(){
+  L.utvalg = shuffle(pool()).slice(0, ANTALL).map(q => q.id);
+  tegnLaerer();
+  if (L.utvalg.length < ANTALL) toast("Bare " + L.utvalg.length + " spørsmål i valgte temaer");
+}
+function bytt(i){
+  const brukt = new Set(L.utvalg);
+  const ledige = pool().filter(q => !brukt.has(q.id));
+  if (!ledige.length) { toast("Ingen flere spørsmål å bytte med"); return; }
+  L.utvalg[i] = shuffle(ledige)[0].id;
+  tegnLaerer();
+}
+function lagLenke(){
+  const base = location.href.split(/[?#]/)[0];
+  let u = base + "?q=" + L.utvalg.join(".");
+  const t = L.tittel.trim();
+  if (t) u += "&t=" + encodeURIComponent(t);
+  return u;
+}
+async function kopier(){
+  const tekst = lagLenke();
+  try { await navigator.clipboard.writeText(tekst); toast("Lenken er kopiert ✔"); }
+  catch(e){
+    const inp = document.getElementById("lenke");
+    inp.select(); inp.setSelectionRange(0, 99999);
+    try { document.execCommand("copy"); toast("Lenken er kopiert ✔"); } catch(_) { toast("Marker lenken og kopier den"); }
+  }
+}
+
+function tegnLaerer(){
+  const chips = TEMAER.map(t => {
+    const on = L.temaer.has(t);
+    const n = BANK.filter(q => q.tema === t).length;
+    return `<label class="chip ${on ? "on" : ""}"><input type="checkbox" data-tema="${esc(t)}" ${on ? "checked" : ""}>${esc(t)} (${n})</label>`;
+  }).join("");
+
+  const liste = L.utvalg.map((id, i) => {
+    const q = byId[id];
+    return `<div class="qitem">
+      <div class="qnum">${i + 1}</div>
+      <div class="qbody"><div class="qtag">${esc(q.tema)}${q.type === "multi" ? " · flere svar" : ""}</div><p class="qtext">${esc(q.q)}</p></div>
+      <button class="swap" data-bytt="${i}" aria-label="Bytt spørsmål ${i + 1}">↻ Bytt</button>
+    </div>`;
+  }).join("");
+
+  app.innerHTML = `
+    <span class="badge">Lærerportal</span>
+    <h1>Popquiz: ${esc(QUIZ_NAVN)}</h1>
+    <p class="lead">Trekk ${ANTALL} tilfeldige spørsmål, bytt ut dem du ikke vil ha, og send lenken til elevene.</p>
+
+    <section class="card">
+      <label class="lbl" for="tittel">Navn på quizen (vises for elevene)</label>
+      <input type="text" id="tittel" maxlength="60" value="${esc(L.tittel)}">
+      <div class="lbl" style="margin-top:14px">Temaer</div>
+      <div class="chips">${chips}</div>
+      <button class="btn primary" id="trekk" ${pool().length ? "" : "disabled"}>🎲 Trekk ${ANTALL} nye spørsmål</button>
+    </section>
+
+    ${L.utvalg.length ? `
+    <section class="card">
+      <h2>Denne popquizen</h2>
+      ${liste}
+    </section>
+    <section class="card">
+      <label class="lbl" for="lenke">Lenke til elevene</label>
+      <div class="linkbox">
+        <input type="text" id="lenke" readonly value="${esc(lagLenke())}">
+        <button class="btn primary" id="kopier">Kopier lenke</button>
+      </div>
+      <div class="row" style="margin-top:10px"><a class="btn ghost" id="apne" href="${esc(lagLenke())}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Prøv quizen selv ↗</a></div>
+    </section>` : ""}
+
+    <p class="note">🔒 Quizen lagrer ingen elevdata. Elevene logger ikke inn, og svarene blir bare på elevens egen skjerm.</p>
+  `;
+}
+
+function laererVisning(){
+  app.addEventListener("click", e => {
+    if (e.target.closest("#trekk")) trekk();
+    const b = e.target.closest("[data-bytt]"); if (b) bytt(+b.dataset.bytt);
+    if (e.target.closest("#kopier")) kopier();
+  });
+  app.addEventListener("change", e => {
+    const t = e.target.dataset && e.target.dataset.tema;
+    if (t !== undefined) {
+      e.target.checked ? L.temaer.add(t) : L.temaer.delete(t);
+      L.utvalg = L.utvalg.filter(id => L.temaer.has(byId[id].tema));
+      tegnLaerer();
+    }
+  });
+  app.addEventListener("input", e => {
+    if (e.target.id === "tittel") {
+      L.tittel = e.target.value;
+      const lenke = document.getElementById("lenke");
+      if (lenke) { lenke.value = lagLenke(); document.getElementById("apne").href = lagLenke(); }
+    }
+  });
+  trekk();
+}
+
+/* ---------------- ELEVVISNING ---------------- */
+let S;
+
+function elevStart(params){
+  const ids = (params.get("q") || "").split(".").filter(id => byId[id]);
+  if (!ids.length) {
+    app.innerHTML = `<section class="card center"><h2>Fant ikke quizen 😕</h2><p>Lenken ser ut til å være feil. Spør læreren din om en ny lenke.</p></section>`;
+    return;
+  }
+  S = { tittel: params.get("t") || "Popquiz: " + QUIZ_NAVN, qs: ids.map(id => byId[id]) };
+  document.title = S.tittel;
+  nullstill();
+  app.addEventListener("change", e => {
+    if (!e.target.matches("input[name=svar]") || S.besvart) return;
+    const i = +e.target.value;
+    if (S.qs[S.idx].type === "single") S.valgt = new Set([i]);
+    else e.target.checked ? S.valgt.add(i) : S.valgt.delete(i);
+    document.querySelectorAll(".opt").forEach(el => el.classList.toggle("sel", S.valgt.has(+el.dataset.i)));
+    document.getElementById("svarknapp").disabled = S.valgt.size === 0;
+  });
+  app.addEventListener("click", e => {
+    if (e.target.closest("#svarknapp")) svar();
+    if (e.target.closest("#neste")) { S.idx++; nyttSporsmal(); }
+    if (e.target.closest("#igjen")) nullstill();
+  });
+}
+
+function nullstill(){
+  S.idx = 0; S.resultat = [];
+  S.rekkefolge = S.qs.map(q => shuffle(q.a.map((_, i) => i)));
+  nyttSporsmal();
+}
+function nyttSporsmal(){ S.valgt = new Set(); S.besvart = false; tegnElev(); }
+
+function erRiktig(q, valgt){
+  return valgt.size === q.c.length && q.c.every(i => valgt.has(i));
+}
+function svar(){
+  if (!S.valgt.size) return;
+  const q = S.qs[S.idx];
+  S.besvart = true;
+  S.resultat[S.idx] = erRiktig(q, S.valgt);
+  tegnElev();
+}
+
+function tegnElev(){
+  const n = S.qs.length;
+  if (S.idx >= n) return tegnResultat();
+  const q = S.qs[S.idx];
+  const typ = q.type === "single" ? "radio" : "checkbox";
+  const ferdig = S.idx + (S.besvart ? 1 : 0);
+
+  const valg = S.rekkefolge[S.idx].map(i => {
+    const sel = S.valgt.has(i), rett = q.c.includes(i);
+    let cls = sel ? "sel" : "", mark = "";
+    if (S.besvart) {
+      cls = "done " + (sel && rett ? "right" : sel && !rett ? "wrong" : !sel && rett ? "missed" : "");
+      mark = sel && rett ? "✔" : sel && !rett ? "✘" : !sel && rett ? "✔ riktig" : "";
+    }
+    return `<label class="opt ${cls}" data-i="${i}">
+      <input type="${typ}" name="svar" value="${i}" ${sel ? "checked" : ""} ${S.besvart ? "disabled" : ""}>
+      <span>${esc(q.a[i])}</span>${mark ? `<span class="mark" aria-hidden="true">${mark}</span>` : ""}
+    </label>`;
+  }).join("");
+
+  let bunn;
+  if (!S.besvart) {
+    bunn = `<button class="btn primary" id="svarknapp" ${S.valgt.size ? "" : "disabled"}>Svar</button>`;
+  } else {
+    const ok = S.resultat[S.idx];
+    bunn = `<div class="feedback ${ok ? "ok" : "no"}">
+        <strong>${ok ? "Riktig! 🎉" : "Ikke helt 🤔"}</strong>
+        ${!ok && q.type === "multi" ? "<p>De riktige svarene er merket med grønt.</p>" : ""}
+        <p>${esc(q.f)}</p>
+      </div>
+      <button class="btn primary" id="neste">${S.idx + 1 < n ? "Neste spørsmål →" : "Se resultatet"}</button>`;
+  }
+
+  app.innerHTML = `
+    <span class="badge">${esc(S.tittel)}</span>
+    <div class="progress"><div class="bar"><span style="width:${(ferdig / n) * 100}%"></span></div><span class="count">${S.idx + 1} av ${n}</span></div>
+    <section class="card">
+      <h2 tabindex="-1" id="sp">${esc(q.q)}</h2>
+      <p class="hint">${q.type === "single" ? "Velg ett svar" : "Velg ett eller flere svar"}</p>
+      ${valg}
+      <div style="margin-top:14px">${bunn}</div>
+    </section>`;
+  if (!S.besvart) document.getElementById("sp").focus({preventScroll:true});
+  else document.getElementById("neste").focus({preventScroll:true});
+}
+
+function tegnResultat(){
+  const n = S.qs.length, poeng = S.resultat.filter(Boolean).length;
+  const andel = poeng / n;
+  const msg = andel === 1 ? "Alt riktig – helt rått! 🏆" : andel >= .6 ? "Godt jobbet! 💪" : andel >= .4 ? "Bra forsøk – se over forklaringene 📚" : "Les litt mer på temaet og prøv igjen 🌱";
+  const liste = S.qs.map((q, i) => `<li>${S.resultat[i] ? "✅" : "❌"} ${esc(q.q)}
+      <div class="ans">Riktig svar: ${q.c.map(c => esc(q.a[c])).join(" · ")}</div></li>`).join("");
+  app.innerHTML = `
+    <span class="badge">${esc(S.tittel)}</span>
+    <section class="card center">
+      <p>Du fikk</p>
+      <div class="score">${poeng} av ${n}</div>
+      <p style="font-size:1.15rem;font-weight:700;margin-top:10px">${msg}</p>
+      <button class="btn primary" id="igjen" style="margin-top:8px">↻ Prøv igjen</button>
+    </section>
+    <section class="card"><h2>Gjennomgang</h2><ul class="review">${liste}</ul></section>`;
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ---------------- START ---------------- */
+const params = new URLSearchParams(location.search);
+if (params.has("q")) elevStart(params); else laererVisning();
+</script>
+</body>
+</html>
