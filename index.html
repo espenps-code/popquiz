@@ -204,7 +204,46 @@ const BANK = [
    f:"Maling og kjemikalier i vasken kan skade naturen og renseanlegget. Avfall skal sorteres."},
   {id:"h3",tema:"HMS og avfall",type:"single",q:"Hvorfor er det lurt å sortere ut metallavfall?",
    a:["Metallet kan smeltes om og brukes på nytt, og det sparer energi og råstoff","Metall brenner godt i forbrenningsanlegg","Bare for at det skal se ryddig ut","Metall forsvinner av seg selv i naturen"],c:[0],
-   f:"Metall kan gjenvinnes nesten uten at kvaliteten blir dårligere."}
+   f:"Metall kan gjenvinnes nesten uten at kvaliteten blir dårligere."},
+
+  // ---------- Ohms lov ----------
+  // Huskeregel: U = R · I   →   I = U / R   og   R = U / I
+  {id:"o1",tema:"Ohms lov",type:"single",q:"Hvilken formel er Ohms lov?",
+   a:["U = R · I","U = R + I","R = U · I","I = U · R"],c:[0],
+   f:"Spenning (U) = resistans (R) · strøm (I). Den kan snus: I = U / R og R = U / I."},
+  {id:"o2",tema:"Ohms lov",type:"multi",q:"Hvilke av disse er riktige enheter?",
+   a:["Spenning måles i volt (V)","Strøm måles i ampere (A)","Resistans måles i ohm (Ω)","Strøm måles i volt (V)"],c:[0,1,2],
+   f:"U i volt, I i ampere og R i ohm. Ohm-tegnet Ω er den greske bokstaven omega."},
+  {id:"o3",tema:"Ohms lov",type:"single",q:"En lyspære har resistans 4 Ω og er koblet til 12 V. Hvor stor er strømmen?",
+   a:["3 A","48 A","16 A","8 A"],c:[0],
+   f:"I = U / R = 12 V / 4 Ω = 3 A."},
+  {id:"o4",tema:"Ohms lov",type:"single",q:"En motstand på 6 Ω har en strøm på 0,5 A gjennom seg. Hva er spenningen over motstanden?",
+   a:["3 V","12 V","6,5 V","5,5 V"],c:[0],
+   f:"U = R · I = 6 Ω · 0,5 A = 3 V."},
+  {id:"o5",tema:"Ohms lov",type:"single",q:"En vannkoker er koblet til 230 V og trekker 10 A. Hvor stor er resistansen?",
+   a:["23 Ω","2300 Ω","240 Ω","220 Ω"],c:[0],
+   f:"R = U / I = 230 V / 10 A = 23 Ω."},
+  {id:"o6",tema:"Ohms lov",type:"single",q:"Et 4,5 V-batteri gir en strøm på 0,3 A gjennom en lampe. Hva er lampens resistans?",
+   a:["15 Ω","1,35 Ω","4,8 Ω","0,07 Ω"],c:[0],
+   f:"R = U / I = 4,5 V / 0,3 A = 15 Ω."},
+  {id:"o7",tema:"Ohms lov",type:"single",q:"Et 9 V-batteri er koblet til en motstand på 450 Ω. Hvor stor er strømmen?",
+   a:["0,02 A (20 mA)","0,2 A (200 mA)","50 A","4050 A"],c:[0],
+   f:"I = U / R = 9 V / 450 Ω = 0,02 A. 1 A = 1000 mA, så 0,02 A = 20 mA."},
+  {id:"o8",tema:"Ohms lov",type:"single",q:"En lysdiode trenger en formotstand. Over motstanden skal det være 5 V, og strømmen skal være 0,02 A. Hvor stor motstand trenger du?",
+   a:["250 Ω","0,1 Ω","25 Ω","100 Ω"],c:[0],
+   f:"R = U / I = 5 V / 0,02 A = 250 Ω."},
+  {id:"o9",tema:"Ohms lov",type:"single",q:"Spenningen i en krets dobles, mens resistansen er den samme. Hva skjer med strømmen?",
+   a:["Strømmen dobles","Strømmen halveres","Strømmen er den samme","Strømmen blir null"],c:[0],
+   f:"I = U / R. Blir U dobbelt så stor og R er lik, blir I også dobbelt så stor."},
+  {id:"o10",tema:"Ohms lov",type:"single",q:"Resistansen i en krets dobles, mens spenningen er den samme. Hva skjer med strømmen?",
+   a:["Strømmen halveres","Strømmen dobles","Strømmen er den samme","Strømmen firedobles"],c:[0],
+   f:"I = U / R. Deler du på et dobbelt så stort tall, blir svaret halvparten."},
+  {id:"o11",tema:"Ohms lov",type:"multi",q:"I hvilke av disse kretsene blir strømmen 2 A?",
+   a:["10 V og 5 Ω","24 V og 12 Ω","6 V og 2 Ω","8 V og 16 Ω"],c:[0,1],
+   f:"10 / 5 = 2 A og 24 / 12 = 2 A. 6 / 2 = 3 A og 8 / 16 = 0,5 A."},
+  {id:"o12",tema:"Ohms lov",type:"single",q:"Lampe A og lampe B er begge koblet til 12 V. Lampe A trekker 2 A, lampe B trekker 3 A. Hvilken lampe har størst resistans?",
+   a:["Lampe A – 6 Ω","Lampe B – 4 Ω","Lampe B – 36 Ω","De har lik resistans"],c:[0],
+   f:"A: 12 / 2 = 6 Ω. B: 12 / 3 = 4 Ω. Lampen med størst resistans slipper gjennom minst strøm."}
 ];
 // SLUTT BANK
 
