@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Popquiz – Sveising</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf6ec; --card:#ffffff; --ink:#14213d; --muted:#4f5868;
+  --accent:#2f6fb5; --accent-dark:#1f4f86; --accent-soft:#e6eff9; --line:#bcd0e8;
+  --warm:#a64b00; --warm-soft:#ffe3c2;
+  --ok:#1b6e3f; --ok-soft:#e1f4e8; --bad:#a8231b; --bad-soft:#fbe4e2;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif;font-size:18px;line-height:1.5}
+main{max-width:680px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.75rem;line-height:1.2;margin:.15em 0 .3em}
+h2{font-size:1.4rem;line-height:1.25;margin:.2em 0 .4em}
+p{margin:.4em 0}
+.badge{display:inline-block;background:var(--warm-soft);color:var(--warm);font-weight:700;font-size:.85rem;padding:3px 10px;border-radius:999px}
+.lead{color:var(--muted)}
+.card{background:var(--card);border:1px solid #f0d9b5;border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 1px 3px rgba(20,33,61,.06)}
+.lbl{display:block;font-weight:700;margin:4px 0 6px}
+input[type=text]{width:100%;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input[type=text]:focus{outline:3px solid #9cc3ee;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{display:flex;align-items:center;gap:6px;border:2px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;background:#fff;font-size:.95rem;user-select:none}
+.chip input{accent-color:var(--accent);width:18px;height:18px}
+.chip.on{background:var(--accent-soft);border-color:var(--accent)}
+.btn{font:inherit;font-weight:700;border:none;border-radius:12px;padding:11px 18px;cursor:pointer;min-height:48px}
+.btn:focus-visible{outline:3px solid #9cc3ee;outline-offset:2px}
+.primary{background:var(--accent);color:#fff}
+.primary:hover{background:var(--accent-dark)}
+.primary:disabled{background:#9fb3cb;cursor:not-allowed}
+.ghost{background:var(--accent-soft);color:var(--accent-dark)}
+.ghost:hover{background:#d5e5f6}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.qitem{display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.qnum{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center}
+.qbody{flex:1;min-width:0}
+.qtag{font-size:.8rem;color:var(--warm);font-weight:700}
+.qtext{margin:2px 0 0}
+.swap{flex:none;font:inherit;font-size:.9rem;font-weight:700;background:var(--accent-soft);color:var(--accent-dark);border:none;border-radius:10px;padding:8px 10px;cursor:pointer;min-height:40px}
+.linkbox{display:flex;gap:8px;flex-wrap:wrap}
+.linkbox input{flex:1 1 220px;font-size:.9rem}
+.note{color:var(--muted);font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+/* Elev */
+.progress{display:flex;align-items:center;gap:12px;margin:6px 0 4px}
+.bar{flex:1;height:10px;background:#e6eef8;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent);transition:width .3s}
+.count{color:var(--warm);font-weight:700;white-space:nowrap}
+.hint{color:var(--warm);margin:0 0 10px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--line);background:#fff;border-radius:12px;padding:14px;margin:10px 0;cursor:pointer;transition:background .15s,border-color .15s}
+.opt:hover{border-color:var(--accent)}
+.opt input{flex:none;width:22px;height:22px;margin-top:2px;accent-color:var(--accent)}
+.opt.sel{background:var(--accent-soft);border-color:var(--accent)}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.opt.missed{border-color:var(--ok);border-style:dashed}
+.opt.done{cursor:default}
+.mark{margin-left:auto;font-weight:700;white-space:nowrap}
+.feedback{border-radius:12px;padding:14px;margin:14px 0}
+.feedback.ok{background:var(--ok-soft);border:2px solid var(--ok)}
+.feedback.no{background:var(--bad-soft);border:2px solid var(--bad)}
+.feedback strong{font-size:1.1rem}
+.score{font-size:3rem;font-weight:700;color:var(--accent);line-height:1}
+.review{list-style:none;padding:0;margin:0}
+.review li{border-top:1px solid #eadfcd;padding:10px 0}
+.review li:first-child{border-top:none}
+.review .ans{color:var(--muted);font-size:.95rem}
+.center{text-align:center}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =========================================================
+   INNSTILLINGER – endre gjerne disse
+   ========================================================= */
+const QUIZ_NAVN = "Sveising";   // vises i overskriften
+const ANTALL = 5;                 // antall spørsmål per popquiz
+
+/* =========================================================
+   SPØRSMÅLSBANK
+   id:   unik kode – ALDRI endre en id som er brukt i en lenke
+   type: "single" = ett riktig svar, "multi" = ett eller flere
+   a:    svaralternativer
+   c:    nummer på riktige svar (første alternativ = 0)
+   f:    forklaring som vises etter at eleven har svart
+   ========================================================= */
+const BANK = [
+  // ---------- 1. Sveiseelektroder ----------
+  {id:"el1",tema:"Sveiseelektroder",type:"single",q:"Hvilke to hoveddeler består en dekket sveiseelektrode av?",
+   a:["En kjernetråd av metall og et dekke rundt","Et kobberrør fylt med gass","En plaststav med metallpulver inni","Bare en massiv stålstav"],c:[0],
+   f:"Kjernetråden smelter og blir til tilsatsmateriale i sømmen. Dekket rundt har flere viktige oppgaver."},
+  {id:"el2",tema:"Sveiseelektroder",type:"single",q:"Hva består kjernetråden i elektroden av?",
+   a:["Et metall som passer til materialet du skal sveise","Plast","Karbon (kull)","Glass"],c:[0],
+   f:"Kjernetråden smelter sammen med arbeidsstykket. Derfor må den være av et metall som passer til grunnmaterialet."},
+  {id:"el3",tema:"Sveiseelektroder",type:"single",q:"Hvorfor finnes det forskjellige typer elektroder?",
+   a:["Ulike materialer, for eksempel vanlig stål og rustfritt stål, trenger ulike elektroder","Bare for at de skal ha ulike farger","Noen er for høyrehendte og noen for venstrehendte","Det spiller ingen rolle hvilken du velger"],c:[0],
+   f:"Elektroden må passe til materialet. Rustfritt stål sveises for eksempel med en rustfri elektrode."},
+  {id:"el4",tema:"Sveiseelektroder",type:"multi",q:"Hvilke oppgaver har elektrodedekket?",
+   a:["Lage gass som beskytter smeltebadet mot luften","Lage slagg som dekker og beskytter sømmen mens den kjøles ned","Gjøre lysbuen stabil og lettere å tenne","Isolere elektroden så du kan holde i den med bare hender"],c:[0,1,2],
+   f:"Dekket brenner og lager en gassky og et lag med slagg som skjermer det varme metallet mot oksygen i luften. Du holder i elektrodeholderen – og alltid med hansker."},
+  {id:"el5",tema:"Sveiseelektroder",type:"single",q:"På en elektrodepakke står det «2,5 × 350 mm». Hva betyr det?",
+   a:["Diameteren er 2,5 mm og lengden er 350 mm","Elektroden skal brukes på 2,5 A og 350 V","Det er 2,5 kg og 350 elektroder i pakken","Lengden er 2,5 mm og diameteren er 350 mm"],c:[0],
+   f:"Det første tallet er diameteren (tykkelsen) på kjernetråden, det andre er lengden på elektroden."},
+  {id:"el6",tema:"Sveiseelektroder",type:"single",q:"Hvilken elektrode trenger høyest strømstyrke?",
+   a:["Diameter 4,0 mm","Diameter 3,2 mm","Diameter 2,5 mm","Alle trenger samme strømstyrke"],c:[0],
+   f:"Jo tykkere elektroden er, jo mer strøm trengs for å smelte den. Anbefalt strømstyrke står på pakken."},
+  {id:"el7",tema:"Sveiseelektroder",type:"single",q:"På pakken står det «60–90 A». Hva betyr det?",
+   a:["Sveiseapparatet bør stilles inn mellom 60 og 90 ampere","Elektroden tåler 60–90 volt","Elektroden varer i 60–90 minutter","Du kan sveise 60–90 cm med hver elektrode"],c:[0],
+   f:"A står for ampere. Det er strømstyrken du stiller inn på sveiseapparatet."},
+  {id:"el8",tema:"Sveiseelektroder",type:"single",q:"Hva forteller typebetegnelsen på pakken (for eksempel E6013)?",
+   a:["Hvilken type elektrode det er, og hva den passer til","Prisen på pakken","Datoen elektrodene ble laget","Hvor mange elektroder det er i pakken"],c:[0],
+   f:"Typebetegnelsen er en kode for elektrodens egenskaper. Den hjelper deg å velge riktig elektrode til jobben."},
+
+  // ---------- 2. Sveiseapparatet og strøm ----------
+  {id:"st1",tema:"Sveiseapparat og strøm",type:"single",q:"Hva betyr det at en strømkrets er sluttet?",
+   a:["Strømmen har en hel, sammenhengende vei å gå – fra apparatet og tilbake igjen","Strømkretsen er slått av","Strømmen er brukt opp","Ledningene er kuttet"],c:[0],
+   f:"Er det et brudd et sted i kretsen, går det ingen strøm. Da blir det heller ingen lysbue."},
+  {id:"st2",tema:"Sveiseapparat og strøm",type:"single",q:"Hvorfor må jordklemmen (returkabelen) festes til arbeidsstykket eller sveisebordet?",
+   a:["Uten den blir ikke strømkretsen sluttet, og du får ingen lysbue","For at arbeidsstykket ikke skal falle ned","For å kjøle ned arbeidsstykket","Den trengs bare når man sveiser rustfritt"],c:[0],
+   f:"Jordkabelen er veien strømmen går tilbake til apparatet. Den må ha god kontakt med rent metall."},
+  {id:"st3",tema:"Sveiseapparat og strøm",type:"single",q:"Hvilken vei går strømmen når du sveiser?",
+   a:["Apparat → sveisekabel → elektrodeholder → elektrode → lysbue → arbeidsstykke → jordkabel → apparat","Apparat → elektrode → luften → apparat","Apparat → jordkabel → sveiseren → apparat","Strømmen går bare inn i elektroden og blir der"],c:[0],
+   f:"Lysbuen er der strømmen «hopper» fra elektroden til arbeidsstykket. Den blir så varm at metallet smelter."},
+  {id:"st4",tema:"Sveiseapparat og strøm",type:"single",q:"Hva er forskjellen på volt og ampere?",
+   a:["Volt er spenningen («trykket»), ampere er strømstyrken («mengden» strøm som går)","Volt og ampere er det samme","Ampere er spenningen, volt er strømstyrken","Volt måler varme, ampere måler lys"],c:[0],
+   f:"Tenk på en vannslange: volt er som vanntrykket, ampere er som hvor mye vann som renner gjennom."},
+  {id:"st5",tema:"Sveiseapparat og strøm",type:"multi",q:"Hvilke av disse er riktige?",
+   a:["Spenning måles i volt (V)","Strømstyrke måles i ampere (A)","Strømstyrke måles i volt (V)","Spenning måles i meter (m)"],c:[0,1],
+   f:"Spenning = volt (V). Strømstyrke = ampere (A)."},
+  {id:"st6",tema:"Sveiseapparat og strøm",type:"single",q:"Hva justerer du på sveiseapparatet når du stiller inn strømstyrken?",
+   a:["Antall ampere (A)","Antall volt (V)","Lengden på elektroden","Farten på viften"],c:[0],
+   f:"Du stiller inn ampere etter elektrodens diameter og tykkelsen på materialet. Anbefalt verdi står på elektrodepakken."},
+  {id:"st7",tema:"Sveiseapparat og strøm",type:"single",q:"Du bytter fra en 2,5 mm til en 3,2 mm elektrode. Hva gjør du med strømstyrken?",
+   a:["Skrur den opp","Skrur den ned","Lar den være som den er","Slår av apparatet"],c:[0],
+   f:"En tykkere elektrode trenger mer strøm for å smelte. Sjekk anbefalt strømstyrke på pakken."},
+
+  // ---------- 3. Sveiseteknikk ----------
+  {id:"te1",tema:"Sveiseteknikk",type:"single",q:"Hva skjer med innsmeltingen hvis du skrur opp strømstyrken?",
+   a:["Den blir dypere","Den blir grunnere","Den blir lik","Sømmen blir kaldere"],c:[0],
+   f:"Mer strøm gir mer varme og dypere innsmelting. For mye strøm kan gi sprut og brenne hull i tynt materiale."},
+  {id:"te2",tema:"Sveiseteknikk",type:"single",q:"Elektroden kleber seg fast til arbeidsstykket hele tiden. Hva er en mulig årsak?",
+   a:["For lav strømstyrke","For høy strømstyrke","For lang lysbue","Sveisemasken er for mørk"],c:[0],
+   f:"Med for lite strøm blir lysbuen svak, og elektroden setter seg fast. Det skjer også hvis du holder elektroden for nær."},
+  {id:"te3",tema:"Sveiseteknikk",type:"single",q:"Hva skjer hvis du sveiser for fort?",
+   a:["Sømmen blir smal og tynn, med dårlig innsmelting","Sømmen blir bred og høy","Innsmeltingen blir dypere","Det blir ikke noe slagg"],c:[0],
+   f:"For fort betyr at metallet ikke rekker å smelte godt sammen. Sømmen blir tynn og svak."},
+  {id:"te4",tema:"Sveiseteknikk",type:"single",q:"Hva skjer hvis du sveiser for sakte?",
+   a:["Sømmen blir bred og høy, og det kommer mye varme inn i materialet","Sømmen blir smal og tynn","Lysbuen slokner","Elektroden varer lenger"],c:[0],
+   f:"For sakte gir en stor «klump» av metall og mye varme. Tynt materiale kan bli skjevt eller få hull."},
+  {id:"te5",tema:"Sveiseteknikk",type:"single",q:"Omtrent hvor lang bør lysbuen (avstanden fra elektroden til arbeidsstykket) være?",
+   a:["Omtrent like lang som elektrodens diameter","Omtrent 5 cm","Så lang som mulig","Elektroden skal presses hardt mot arbeidsstykket"],c:[0],
+   f:"En 2,5 mm elektrode gir altså ca. 2,5 mm lysbue. For kort bue gjør at elektroden kleber."},
+  {id:"te6",tema:"Sveiseteknikk",type:"multi",q:"Hva kan skje hvis lysbuen blir for lang?",
+   a:["Mer sprut","Ustabil lysbue","Dårligere beskyttelse av smeltebadet, som kan gi porer (små hull) i sømmen","Dypere innsmelting"],c:[0,1,2],
+   f:"Med lang bue blir gassbeskyttelsen dårligere, og innsmeltingen blir grunnere – ikke dypere."},
+  {id:"te7",tema:"Sveiseteknikk",type:"single",q:"Hvordan bør du vanligvis holde elektroden når du sveiser?",
+   a:["Litt skrått, ca. 60–80° mot arbeidsstykket","Helt flatt langs arbeidsstykket","Vinkelen spiller ingen rolle","Så skrått som mulig, nesten liggende"],c:[0],
+   f:"Vinkelen styrer hvor varmen og lysbuen treffer. Feil vinkel kan gi slagg i sømmen og dårlig innsmelting."},
+  {id:"te8",tema:"Sveiseteknikk",type:"multi",q:"Hvilke av disse påvirker innsmeltingen og dybden på smeltebadet?",
+   a:["Strømstyrken","Sveisehastigheten","Lengden på lysbuen","Fargen på sveisehanskene"],c:[0,1,2],
+   f:"Strømstyrke, hastighet, buelengde og elektrodevinkel påvirker alle sveiseresultatet."},
+
+  // ---------- 4. HMS og sikkerhet ----------
+  {id:"hm1",tema:"HMS og sikkerhet",type:"single",q:"Hvorfor bruker vi sveiseavsug?",
+   a:["For å fjerne sveiserøyken, som er skadelig å puste inn","For å kjøle ned sveisesømmen","For å gjøre lysbuen mer stabil","For å dempe støyen"],c:[0],
+   f:"Sveiserøyk inneholder bittesmå partikler og gasser som kan skade lungene. Avsuget skal være nær sveisestedet."},
+  {id:"hm2",tema:"HMS og sikkerhet",type:"single",q:"Hvor kommer sveiserøyken fra?",
+   a:["Fra elektrodedekket og metallet som brenner og fordamper i lysbuen","Fra vanndamp i luften","Fra sveisemasken","Fra strømkabelen"],c:[0],
+   f:"Maling, olje eller sink på arbeidsstykket gir ekstra farlig røyk. Derfor skal arbeidsstykket være rent."},
+  {id:"hm3",tema:"HMS og sikkerhet",type:"multi",q:"Hvorfor er det viktig å bruke sveisemaske?",
+   a:["Lyset fra lysbuen kan skade øynene («sveiseblink»)","Lysbuen sender ut UV-stråling som kan gi forbrenning på huden","Masken beskytter ansiktet mot sprut","Masken filtrerer bort sveiserøyken"],c:[0,1,2],
+   f:"Sveisemasken beskytter øyne og ansikt – men ikke mot røyken. Derfor trenger vi også avsug."},
+  {id:"hm4",tema:"HMS og sikkerhet",type:"single",q:"Du får en brannskade. Hva er det første du skal gjøre?",
+   a:["Kjøle ned med lunkent vann i ca. 20 minutter","Smøre på smør eller krem","Legge is rett på huden","Vente og se om det går over"],c:[0],
+   f:"Bruk lunkent vann – ikke iskaldt – i ca. 20 minutter. Si alltid fra til læreren."},
+  {id:"hm5",tema:"HMS og sikkerhet",type:"multi",q:"Hva er riktig å gjøre ved en brannskade?",
+   a:["Si fra til læreren","Kjøle ned med lunkent vann","La være å rive av klær som sitter fast i såret","Stikke hull på blemmene"],c:[0,1,2],
+   f:"Blemmer beskytter huden under. Stikker du hull på dem, kan såret bli infisert."},
+  {id:"hm6",tema:"HMS og sikkerhet",type:"single",q:"Hvorfor kan du brenne deg på et arbeidsstykke som ser kaldt ut?",
+   a:["Metallet holder på varmen lenge etter sveising, selv om det ikke gløder","Det kan ikke skje","Fordi det fortsatt er strøm i det","Fordi sveisemasken gjør at alt ser kaldere ut"],c:[0],
+   f:"Bruk tang og hansker når du flytter arbeidsstykker, og si fra om varme deler."},
+  {id:"hm7",tema:"HMS og sikkerhet",type:"multi",q:"Hvilket verneutstyr skal du bruke når du sveiser?",
+   a:["Sveisemaske","Sveisehansker","Klær som ikke brenner lett (ikke syntetisk stoff)","Shorts og t-skjorte"],c:[0,1,2],
+   f:"Syntetiske klær kan smelte fast i huden ved sprut. Dekk til armer og bein."}
+];
+// SLUTT BANK
+
+/* =========================================================
+   Herfra og ned: selve appen. Trenger ikke endres.
+   ========================================================= */
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const byId = Object.fromEntries(BANK.map(q => [q.id, q]));
+const TEMAER = [...new Set(BANK.map(q => q.tema))];
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+/* ---------------- LÆRERPORTAL ---------------- */
+const L = { temaer: new Set(TEMAER), utvalg: [], tittel: "Popquiz: " + QUIZ_NAVN };
+const pool = () => BANK.filter(q => L.temaer.has(q.tema));
+
+function trekk(){
+  L.utvalg = shuffle(pool()).slice(0, ANTALL).map(q => q.id);
+  tegnLaerer();
+  if (L.utvalg.length < ANTALL) toast("Bare " + L.utvalg.length + " spørsmål i valgte temaer");
+}
+function bytt(i){
+  const brukt = new Set(L.utvalg);
+  const ledige = pool().filter(q => !brukt.has(q.id));
+  if (!ledige.length) { toast("Ingen flere spørsmål å bytte med"); return; }
+  L.utvalg[i] = shuffle(ledige)[0].id;
+  tegnLaerer();
+}
+function lagLenke(){
+  const base = location.href.split(/[?#]/)[0];
+  let u = base + "?q=" + L.utvalg.join(".");
+  const t = L.tittel.trim();
+  if (t) u += "&t=" + encodeURIComponent(t);
+  return u;
+}
+async function kopier(){
+  const tekst = lagLenke();
+  try { await navigator.clipboard.writeText(tekst); toast("Lenken er kopiert ✔"); }
+  catch(e){
+    const inp = document.getElementById("lenke");
+    inp.select(); inp.setSelectionRange(0, 99999);
+    try { document.execCommand("copy"); toast("Lenken er kopiert ✔"); } catch(_) { toast("Marker lenken og kopier den"); }
+  }
+}
+
+function tegnLaerer(){
+  const chips = TEMAER.map(t => {
+    const on = L.temaer.has(t);
+    const n = BANK.filter(q => q.tema === t).length;
+    return `<label class="chip ${on ? "on" : ""}"><input type="checkbox" data-tema="${esc(t)}" ${on ? "checked" : ""}>${esc(t)} (${n})</label>`;
+  }).join("");
+
+  const liste = L.utvalg.map((id, i) => {
+    const q = byId[id];
+    return `<div class="qitem">
+      <div class="qnum">${i + 1}</div>
+      <div class="qbody"><div class="qtag">${esc(q.tema)}${q.type === "multi" ? " · flere svar" : ""}</div><p class="qtext">${esc(q.q)}</p></div>
+      <button class="swap" data-bytt="${i}" aria-label="Bytt spørsmål ${i + 1}">↻ Bytt</button>
+    </div>`;
+  }).join("");
+
+  app.innerHTML = `
+    <span class="badge">Lærerportal</span>
+    <h1>Popquiz: ${esc(QUIZ_NAVN)}</h1>
+    <p class="lead">Trekk ${ANTALL} tilfeldige spørsmål, bytt ut dem du ikke vil ha, og send lenken til elevene.</p>
+
+    <section class="card">
+      <label class="lbl" for="tittel">Navn på quizen (vises for elevene)</label>
+      <input type="text" id="tittel" maxlength="60" value="${esc(L.tittel)}">
+      <div class="lbl" style="margin-top:14px">Temaer</div>
+      <div class="chips">${chips}</div>
+      <button class="btn primary" id="trekk" ${pool().length ? "" : "disabled"}>🎲 Trekk ${ANTALL} nye spørsmål</button>
+    </section>
+
+    ${L.utvalg.length ? `
+    <section class="card">
+      <h2>Denne popquizen</h2>
+      ${liste}
+    </section>
+    <section class="card">
+      <label class="lbl" for="lenke">Lenke til elevene</label>
+      <div class="linkbox">
+        <input type="text" id="lenke" readonly value="${esc(lagLenke())}">
+        <button class="btn primary" id="kopier">Kopier lenke</button>
+      </div>
+      <div class="row" style="margin-top:10px"><a class="btn ghost" id="apne" href="${esc(lagLenke())}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Prøv quizen selv ↗</a></div>
+    </section>` : ""}
+
+    <p class="note">🔒 Quizen lagrer ingen elevdata. Elevene logger ikke inn, og svarene blir bare på elevens egen skjerm.</p>
+  `;
+}
+
+function laererVisning(){
+  app.addEventListener("click", e => {
+    if (e.target.closest("#trekk")) trekk();
+    const b = e.target.closest("[data-bytt]"); if (b) bytt(+b.dataset.bytt);
+    if (e.target.closest("#kopier")) kopier();
+  });
+  app.addEventListener("change", e => {
+    const t = e.target.dataset && e.target.dataset.tema;
+    if (t !== undefined) {
+      e.target.checked ? L.temaer.add(t) : L.temaer.delete(t);
+      L.utvalg = L.utvalg.filter(id => L.temaer.has(byId[id].tema));
+      tegnLaerer();
+    }
+  });
+  app.addEventListener("input", e => {
+    if (e.target.id === "tittel") {
+      L.tittel = e.target.value;
+      const lenke = document.getElementById("lenke");
+      if (lenke) { lenke.value = lagLenke(); document.getElementById("apne").href = lagLenke(); }
+    }
+  });
+  trekk();
+}
+
+/* ---------------- ELEVVISNING ---------------- */
+let S;
+
+function elevStart(params){
+  const ids = (params.get("q") || "").split(".").filter(id => byId[id]);
+  if (!ids.length) {
+    app.innerHTML = `<section class="card center"><h2>Fant ikke quizen 😕</h2><p>Lenken ser ut til å være feil. Spør læreren din om en ny lenke.</p></section>`;
+    return;
+  }
+  S = { tittel: params.get("t") || "Popquiz: " + QUIZ_NAVN, qs: ids.map(id => byId[id]) };
+  document.title = S.tittel;
+  nullstill();
+  app.addEventListener("change", e => {
+    if (!e.target.matches("input[name=svar]") || S.besvart) return;
+    const i = +e.target.value;
+    if (S.qs[S.idx].type === "single") S.valgt = new Set([i]);
+    else e.target.checked ? S.valgt.add(i) : S.valgt.delete(i);
+    document.querySelectorAll(".opt").forEach(el => el.classList.toggle("sel", S.valgt.has(+el.dataset.i)));
+    document.getElementById("svarknapp").disabled = S.valgt.size === 0;
+  });
+  app.addEventListener("click", e => {
+    if (e.target.closest("#svarknapp")) svar();
+    if (e.target.closest("#neste")) { S.idx++; nyttSporsmal(); }
+    if (e.target.closest("#igjen")) nullstill();
+  });
+}
+
+function nullstill(){
+  S.idx = 0; S.resultat = [];
+  S.rekkefolge = S.qs.map(q => shuffle(q.a.map((_, i) => i)));
+  nyttSporsmal();
+}
+function nyttSporsmal(){ S.valgt = new Set(); S.besvart = false; tegnElev(); }
+
+function erRiktig(q, valgt){
+  return valgt.size === q.c.length && q.c.every(i => valgt.has(i));
+}
+function svar(){
+  if (!S.valgt.size) return;
+  const q = S.qs[S.idx];
+  S.besvart = true;
+  S.resultat[S.idx] = erRiktig(q, S.valgt);
+  tegnElev();
+}
+
+function tegnElev(){
+  const n = S.qs.length;
+  if (S.idx >= n) return tegnResultat();
+  const q = S.qs[S.idx];
+  const typ = q.type === "single" ? "radio" : "checkbox";
+  const ferdig = S.idx + (S.besvart ? 1 : 0);
+
+  const valg = S.rekkefolge[S.idx].map(i => {
+    const sel = S.valgt.has(i), rett = q.c.includes(i);
+    let cls = sel ? "sel" : "", mark = "";
+    if (S.besvart) {
+      cls = "done " + (sel && rett ? "right" : sel && !rett ? "wrong" : !sel && rett ? "missed" : "");
+      mark = sel && rett ? "✔" : sel && !rett ? "✘" : !sel && rett ? "✔ riktig" : "";
+    }
+    return `<label class="opt ${cls}" data-i="${i}">
+      <input type="${typ}" name="svar" value="${i}" ${sel ? "checked" : ""} ${S.besvart ? "disabled" : ""}>
+      <span>${esc(q.a[i])}</span>${mark ? `<span class="mark" aria-hidden="true">${mark}</span>` : ""}
+    </label>`;
+  }).join("");
+
+  let bunn;
+  if (!S.besvart) {
+    bunn = `<button class="btn primary" id="svarknapp" ${S.valgt.size ? "" : "disabled"}>Svar</button>`;
+  } else {
+    const ok = S.resultat[S.idx];
+    bunn = `<div class="feedback ${ok ? "ok" : "no"}">
+        <strong>${ok ? "Riktig! 🎉" : "Ikke helt 🤔"}</strong>
+        ${!ok && q.type === "multi" ? "<p>De riktige svarene er merket med grønt.</p>" : ""}
+        <p>${esc(q.f)}</p>
+      </div>
+      <button class="btn primary" id="neste">${S.idx + 1 < n ? "Neste spørsmål →" : "Se resultatet"}</button>`;
+  }
+
+  app.innerHTML = `
+    <span class="badge">${esc(S.tittel)}</span>
+    <div class="progress"><div class="bar"><span style="width:${(ferdig / n) * 100}%"></span></div><span class="count">${S.idx + 1} av ${n}</span></div>
+    <section class="card">
+      <h2 tabindex="-1" id="sp">${esc(q.q)}</h2>
+      <p class="hint">${q.type === "single" ? "Velg ett svar" : "Velg ett eller flere svar"}</p>
+      ${valg}
+      <div style="margin-top:14px">${bunn}</div>
+    </section>`;
+  if (!S.besvart) document.getElementById("sp").focus({preventScroll:true});
+  else document.getElementById("neste").focus({preventScroll:true});
+}
+
+function tegnResultat(){
+  const n = S.qs.length, poeng = S.resultat.filter(Boolean).length;
+  const andel = poeng / n;
+  const msg = andel === 1 ? "Alt riktig – helt rått! 🏆" : andel >= .6 ? "Godt jobbet! 💪" : andel >= .4 ? "Bra forsøk – se over forklaringene 📚" : "Les litt mer på temaet og prøv igjen 🌱";
+  const liste = S.qs.map((q, i) => `<li>${S.resultat[i] ? "✅" : "❌"} ${esc(q.q)}
+      <div class="ans">Riktig svar: ${q.c.map(c => esc(q.a[c])).join(" · ")}</div></li>`).join("");
+  app.innerHTML = `
+    <span class="badge">${esc(S.tittel)}</span>
+    <section class="card center">
+      <p>Du fikk</p>
+      <div class="score">${poeng} av ${n}</div>
+      <p style="font-size:1.15rem;font-weight:700;margin-top:10px">${msg}</p>
+      <button class="btn primary" id="igjen" style="margin-top:8px">↻ Prøv igjen</button>
+    </section>
+    <section class="card"><h2>Gjennomgang</h2><ul class="review">${liste}</ul></section>`;
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ---------------- START ---------------- */
+const params = new URLSearchParams(location.search);
+if (params.has("q")) elevStart(params); else laererVisning();
+</script>
+</body>
+</html>
